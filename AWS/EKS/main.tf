@@ -129,16 +129,16 @@ resource "aws_nat_gateway" "cluster-ssp-ninja-ng-a" {
   depends_on = [aws_internet_gateway.cluster-ssp-ninja-ig]
 }
 
-resource "aws_nat_gateway" "cluster-ssp-ninja-ng-b" {
-  allocation_id = aws_eip.cluster-ssp-ninja-eip-b.id
-  subnet_id     = aws_subnet.cluster-ssp-ninja-subnet-b.id
+# resource "aws_nat_gateway" "cluster-ssp-ninja-ng-b" {
+#   allocation_id = aws_eip.cluster-ssp-ninja-eip-b.id
+#   subnet_id     = aws_subnet.cluster-ssp-ninja-subnet-b.id
 
-  tags = {
-    Name = "cluster-ssp-ninja-ng-b"
-  }
+#   tags = {
+#     Name = "cluster-ssp-ninja-ng-b"
+#   }
 
-  depends_on = [aws_internet_gateway.cluster-ssp-ninja-ig]
-}
+#   depends_on = [aws_internet_gateway.cluster-ssp-ninja-ig]
+# }
 
 # resource "aws_nat_gateway" "cluster-ssp-ninja-ng-c" {
 #   allocation_id = aws_eip.cluster-ssp-ninja-eip-c.id
@@ -251,6 +251,8 @@ resource "aws_iam_role_policy_attachment" "cluster-ssp-ninja-node-group-role-pa-
 }
 
 resource "tls_private_key" "cluster-ssp-ninja-key" {
+  # count = var.create ? 1 : 0
+
   algorithm = "RSA"
   rsa_bits  = 4096
 }
@@ -286,4 +288,12 @@ resource "aws_eks_node_group" "example" {
     aws_iam_role_policy_attachment.cluster-ssp-ninja-node-group-role-pa-2,
     aws_iam_role_policy_attachment.cluster-ssp-ninja-node-group-role-pa-3,
   ]
+}
+
+resource "null_resource" "download_private_key" {
+  # count = var.create ? 1 : 0
+
+  provisioner "local-exec" {
+    command = "echo '${tls_private_key.cluster-ssp-ninja-key.private_key_pem}' > ${format("cluster-ssp-ninja-key.pem")} && chmod ${var.permissions} ${format("cluster-ssp-ninja-key.pem")}"
+  }
 }
