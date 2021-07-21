@@ -1,0 +1,36 @@
+#The namespace in which all the components should be installed 
+namespace: kustomize-demo
+
+#The order in which the Kubernetes resources should be installed 
+resources:
+- ns.yaml 
+- deployment.yaml
+- svc.yaml
+
+
+# Below are updates later we can make it depends on requirement without touching actual yaml files inside cluster
+# #The number of replicas for the kustomize-test deployment
+# replicas:
+# - name: kustomize-test
+#   count: 2
+
+#The portion of patch to be added for the kustomize-test deployment
+# patchesStrategicMerge:
+# - |-
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: kustomize-test
+#   spec:
+#     template:
+#       spec:
+#         containers:
+#           - name: nginx
+#             image: nginx
+#             resources:
+#               requests:
+#                 memory: "64Mi"
+#                 cpu: "250m"
+#               limits:
+#                 memory: "128Mi"
+#                 cpu: "500m"
